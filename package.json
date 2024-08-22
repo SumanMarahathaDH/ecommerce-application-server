@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "backend server for e commerce application",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "dev": "node server.js",
     "start": "nodemon server.js"
