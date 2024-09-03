@@ -10,3 +10,8 @@ export const createUser = async (name, email, address, phone, hashedPassword) =>
     }).save()
     return user
 }
+
+export const getUserByID = async (id) => {
+    const user = await userModel.findById(id).select("-password")
+    return user
+}

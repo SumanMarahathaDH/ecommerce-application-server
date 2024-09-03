@@ -1,5 +1,5 @@
 import userModel from "../models/userModel.js"
-import { createUser } from "../services/userService.js"
+import { createUser, getUserByID } from "../services/userService.js"
 import { comparePassword, hashPassword } from "../utils/authHelpers.js"
 import JWT from 'jsonwebtoken'
 import { environmentConfig } from "../config/environment.js"
@@ -59,6 +59,82 @@ export const loginUserController = async (req, res) => {
         res.status(500).send({
             success: false,
             message: 'Login Failed!',
+            error
+        })
+    }
+}
+
+export const getLoggedUser = async (req, res) => {
+    try{
+        const id = req.user._id
+        const user = await getUserByID(id)
+        if(user){
+            res.status(200).send({
+                success: true,
+                user
+            })
+        }
+        else {
+             res.status(500).send({
+                success: false,
+                message: "Something went wrong",
+            })
+        }
+    }
+    catch(error){
+        res.status(500).send({
+            success: false,
+            message: "Something went wrong",
+            error
+        })
+    }
+}
+
+export const getAdminUserInfo = async (req, res) => {
+    try{
+        const id = req.user._id
+        const user = await getUserByID(id)
+        if(user){
+            res.status(200).send({
+                success: true,
+                user
+            })
+        }
+        else {
+            res.status(404).send({
+                success: false,
+                message: "User doesn't exists"
+            })
+        }
+    }
+    catch(error){
+        res.status(500).send({
+            success: false,
+            message: "Something went wrong",
+            error
+        })
+    }
+}
+
+export const forgotPassword = async (req, res) => {
+    try{
+        const {email} = req.body
+        const existingUser = await userModel.findOne({email: email})
+        if(!existingUser){
+            return res.status(404).send({
+                success: false,
+                message: "User doesn't exists"
+            })
+        }
+        res.status(200).send({
+            success: true,
+            message: "Email sent successfully"
+        })
+    }
+    catch(error){
+        res.status(500).send({
+            success: false,
+            message: "Something went wrong",
             error
         })
     }
