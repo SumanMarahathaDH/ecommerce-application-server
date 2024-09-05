@@ -3,6 +3,10 @@ import { createUser, getUserByID } from "../services/userService.js"
 import { comparePassword, hashPassword } from "../utils/authHelpers.js"
 import JWT from 'jsonwebtoken'
 import { environmentConfig } from "../config/environment.js"
+import tokenModel from "../models/tokenModel.js"
+import crypto from 'crypto'
+import { saveNewToken } from "../services/tokenService.js"
+import { sendEmail } from "../utils/emailHelper.js"
 
 export const registerUserController = async (req, res) => {
     const {name, email, password, address, phone} = req.body
@@ -126,10 +130,35 @@ export const forgotPassword = async (req, res) => {
                 message: "User doesn't exists"
             })
         }
-        res.status(200).send({
-            success: true,
-            message: "Email sent successfully"
-        })
+        const existingToken = await tokenModel.findOne({userId: existingUser._id})
+        if(existingToken){
+            existingToken.deleteOne()
+        }
+        const resetPasswordToken = crypto.randomBytes(32).toString("hex")
+        const hashedResetPasswordToken = await hashPassword(resetPasswordToken)
+        await saveNewToken(existingUser._id, hashedResetPasswordToken)
+        const clientURL = process.env.CLIENT_URL
+        const resetPasswordLink = `${clientURL}/password-reset?token=${resetPasswordToken}`
+        try{
+            await sendEmail(existingUser.email, 
+                "Your reset password link has arrived", 
+                {
+                    name: existingUser.name,
+                    link: resetPasswordLink
+                },
+                'utils/templates/passwordResetEmail.handlebars'
+            )
+            res.status(200).send({
+                success: true,
+                message: "Email sent successfully"
+            })
+        }
+        catch(error){
+            res.status(500).send({
+                success: false,
+                message: "Could not send email, Please try again!"
+            })
+        }
     }
     catch(error){
         res.status(500).send({
