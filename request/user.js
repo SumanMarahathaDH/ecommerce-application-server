@@ -16,3 +16,9 @@ export const userLoginRequest = [
 export const forgotPasswordRequest = [
     check('email').trim().isEmail().withMessage("Valid Email is required")
 ]
+
+export const resetPasswordRequest = [
+    check('userId').trim().notEmpty().withMessage('UserId is required'),
+    check('token').trim().notEmpty().withMessage('Token is required'),
+    check('password').trim().isLength({min: 6}).withMessage('Password must be at least 6 characters')
+]

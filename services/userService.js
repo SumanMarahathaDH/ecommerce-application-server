@@ -15,3 +15,8 @@ export const getUserByID = async (id) => {
     const user = await userModel.findById(id).select("-password")
     return user
 }
+
+export const updateUserById = async (id, updatedInfo) => {
+    const user = await userModel.findByIdAndUpdate(id, updatedInfo)
+    return user
+}
