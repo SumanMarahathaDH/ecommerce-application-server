@@ -132,7 +132,7 @@ export const forgotPassword = async (req, res) => {
         }
         const existingToken = await tokenModel.findOne({userId: existingUser._id})
         if(existingToken){
-            await existingToken.deleteOne()
+            await tokenModel.deleteMany({userId: existingUser._id})
         }
         const resetPasswordToken = crypto.randomBytes(32).toString("hex")
         const hashedResetPasswordToken = await hashPassword(resetPasswordToken)
