@@ -13,6 +13,10 @@ export const categoryUpdateRequest = [
     check('name').trim().notEmpty().withMessage("Name is required")
 ]
 
-export const categoryGetBySlug = [
+export const categoryGetRequestBySlug = [
     param('slug').trim().notEmpty().isSlug().withMessage('Valid slug as params is required')
+]
+
+export const categoryDeleteRequest = [
+    param('id').trim().notEmpty().withMessage('Valid id as params is required')
 ]

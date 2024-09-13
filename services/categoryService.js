@@ -10,7 +10,16 @@ export const getCategoryById = async (id) => {
    return category
 }
 
+export const getCategoryBySlug = async (slug) => {
+   const category = await categoryModel.findOne({slug})
+   return category
+}
+
 export const updateCategoryService = async (id, updatedData) => {
    const newCategory = await categoryModel.findByIdAndUpdate(id, updatedData, {new: true})
    return newCategory
 } 
+
+export const deleteCategoryById = async (id) => {
+   await categoryModel.findByIdAndDelete(id)
+}

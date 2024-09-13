@@ -1,6 +1,6 @@
 import slugify from "slugify"
 import categoryModel from "../models/categoryModel.js"
-import { getCategoryById, saveCategory, updateCategoryService } from "../services/categoryService.js"
+import { getCategoryById, saveCategory, updateCategoryService, getCategoryBySlug as getCategoryBySlugService, deleteCategoryById } from "../services/categoryService.js"
 
 export const createCategory = async (req, res) => {
     try{
@@ -53,6 +53,30 @@ export const getCategory = async (req, res) => {
     }
 }
 
+export const getCategoryBySlug = async (req, res) => {
+    try{
+        const {slug} = req.params
+        const category = await getCategoryBySlugService(slug)
+        if(!category){
+            return res.status(404).send({
+            success: false,
+            message: "Category with provided slug doesn't exist"
+            })
+        }
+        res.status(200).send({
+            success: true,
+            category
+        })
+    }
+    catch(error){
+        res.status(500).send({
+            success: false,
+            message: "Something went wrong",
+            error
+        })
+    }
+}
+
 export const getAllCategory = async (req, res) => {
     try{
         const categories = await categoryModel.find()
@@ -87,6 +111,31 @@ export const updateCategory = async (req, res) => {
             success: true,
             message: "Category updated successfully",
             category: updatedCategory
+        })
+    }
+    catch(error){
+        res.status(500).send({
+            success: false,
+            message: "something went wrong",
+            error
+        })
+    }
+}
+
+export const deleteCategory = async (req , res) => {
+    try{
+        const {id} = req.params
+        const category = await getCategoryById(id)
+        if(!category){
+            return res.status(404).send({
+                success: false,
+                message: "Category doesn't exists"
+            })
+        }
+        await deleteCategoryById(id)
+        res.status(200).send({
+            success: true,
+            message: "Category deleted successfully"
         })
     }
     catch(error){

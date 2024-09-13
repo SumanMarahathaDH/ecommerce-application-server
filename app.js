@@ -6,7 +6,9 @@ import categoryRoutes from './routes/categoryRoutes.js';
 
 const app = express()
 app.use(express.json())
-app.use(cors())
+app.use(cors({
+    origin: 'http://localhost:5173/'
+}))
 app.use(morgan('dev'))
 
 app.use('/api/v1/auth', userRoutes)
