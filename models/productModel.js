@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { Schema } from 'mongoose'
 
 const productSchema = new mongoose.Schema({
     name: {
@@ -25,16 +25,24 @@ const productSchema = new mongoose.Schema({
         required: true,
         min: 1
     },
-    rating: {
-        type: Number,
-        trim: true,
-        min: 1
-    },
     category: {
         type: Schema.Types.ObjectId,
-        trim: true,
         required: true,
         ref: "category"
+    },
+    quantity: {
+        type: Number,
+        required: true,
+        trim: true,
+        min: 1,
+        max: 100000
+    },
+    shipping: {
+        type: Boolean
+    },
+    photo: {
+        data: Buffer,
+        contentType: String
     }
 }, {timestamps: true})
 

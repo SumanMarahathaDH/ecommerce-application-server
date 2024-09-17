@@ -6,7 +6,7 @@ export const validator = (req, res, next) => {
         return res.status(422).send({
             success: false,
             message: 'Bad Request',
-            errors: errors.array()
+            errors: errors.array({ onlyFirstError: true })
         })
     }
     else {
