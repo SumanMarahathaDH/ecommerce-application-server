@@ -1,4 +1,4 @@
-import { check } from 'express-validator';
+import { check, param } from 'express-validator';
 
 export const productCreateRequest = [
     // Validate 'name' field
@@ -37,3 +37,21 @@ export const productCreateRequest = [
         .optional()
         .isBoolean().withMessage('Valid shipping value is required')
 ];
+
+export const ProductGetRequestBySlug = [
+    param('slug').trim()
+    .notEmpty().withMessage('Slug is required')
+    .isSlug().withMessage('Valid slug as params is required')
+]
+
+export const productPhotoGetRequest = [
+    param('id').trim()
+    .notEmpty().withMessage('Id is required')
+    .isMongoId().withMessage('Valid id as params is required')
+]
+
+export const productDeleteRequest = [
+    param('id').trim()
+    .notEmpty().withMessage('Id is required')
+    .isMongoId().withMessage('Valid id as params is required')
+]
