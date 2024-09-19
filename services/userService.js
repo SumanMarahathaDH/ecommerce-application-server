@@ -12,7 +12,7 @@ export const createUser = async (name, email, address, phone, hashedPassword) =>
 }
 
 export const getUserByID = async (id) => {
-    const user = await userModel.findById(id).select("-password")
+    const user = await userModel.findById(id)
     return user
 }
 

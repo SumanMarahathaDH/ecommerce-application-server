@@ -1,4 +1,4 @@
-import { check, param } from 'express-validator';
+import { check, param, query } from 'express-validator';
 
 export const productCreateRequest = [
     // Validate 'name' field
@@ -101,4 +101,10 @@ export const productByPageRequest = [
 
 export const productByCategoryGetRequest = [
     param('slug').trim().notEmpty().withMessage('Slug as param is required').isSlug().withMessage('Valid slug is required')
+]
+
+export const productSearchGetRequest = [
+    query('keyword').notEmpty().withMessage('Search keyword is required')
+    .isLength({ min: 2 }).withMessage('Name must be at least 2 characters long')
+    .isLength({ max: 50 }).withMessage('Name cannot exceed 50 characters'),
 ]

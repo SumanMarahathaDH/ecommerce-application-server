@@ -7,6 +7,7 @@ import tokenModel from "../models/tokenModel.js"
 import crypto from 'crypto'
 import { getTokenByUserId, saveNewToken } from "../services/tokenService.js"
 import { sendEmail } from "../utils/emailHelper.js"
+import { validateHeaderValue } from "http"
 
 export const registerUserController = async (req, res) => {
     const {name, email, password, address, phone} = req.body
@@ -201,6 +202,60 @@ export const resetPassword = async (req, res) => {
         res.status(200).send({
             success: true,
             message: "Password reset successfully"
+        })
+    }
+    catch(error){
+        res.status(500).send({
+            success: false,
+            message: "Something went wrong",
+            error
+        })
+    }
+}
+
+export const updateProfile = async (req, res) => {
+    try{
+        const user = req.user
+        const updatedUser = await userModel.findByIdAndUpdate(user._id, {...req.body}, {new: true}).select('-password')
+        res.status(200).send({
+            success: false,
+            message: 'User profile updated successfully',
+            user: updatedUser
+        })
+    }
+    catch(error){
+        res.status(500).send({
+            success: false,
+            message: "Something went wrong",
+            error
+        })
+    }
+}
+
+export const changePassword = async (req, res) => {
+    try{
+        const {oldPassword, newPassword} = req.body
+        if(oldPassword === newPassword){
+            return res.status(400).send({
+                success: false,
+                message: "New password and old password cannot be same"
+            })
+        }
+        const user = await getUserByID(req.user._id)
+        const isValidOldPassword = await comparePassword(oldPassword, user.password)
+        if(!isValidOldPassword){
+            return res.status(400).send({
+                success: false,
+                message: "Old password doesn't match"
+            })
+        }
+        const hashedNewPassword = await hashPassword(newPassword)
+        await updateUserById(user._id, {
+            password: hashedNewPassword
+        })
+        res.status(200).send({
+            success: true,
+            message: "Password changed successfully"
         })
     }
     catch(error){

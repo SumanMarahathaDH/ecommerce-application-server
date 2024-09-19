@@ -243,3 +243,32 @@ export const getProductByCategory = async (req, res) => {
         })  
     }
 }
+
+export const searchProductController = async (req, res) => {
+    try{
+        const {keyword} = req.query
+        const products = await productSchema.find({
+            $or: [
+                {
+                    name: { $regex:  keyword?.trim() , $options: 'i'}
+                },
+                {
+                    description: { $regex: keyword?.trim(), $options: 'i' }
+                }
+            ]
+        }).select("-photo").populate('category')
+        res.status(200).send({
+            success: false,
+            message: `product for keyword ${keyword} fetched successfully`,
+            totalCount: products.length,
+            products
+        })
+    }
+    catch(error){
+        res.status(500).send({
+            success: false,
+            message: "Something went wrong",
+            error
+        }) 
+    }
+}
